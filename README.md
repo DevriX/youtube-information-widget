@@ -1,4 +1,5 @@
-=== YouTube information ===
+#YouTube information
+
 Contributors: Samuel Elh
 Tags: iframe, mobile, responsive,  shortcode, subscribe, sidebar,  video, 
 views, video player, wordpress, widget,  youtube, Youtube channel, youtube user, Youtube-video, youtube plugin
