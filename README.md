@@ -24,3 +24,7 @@ This plugin allows you to embed information about your YouTube channel, includin
 1. Upload the plugin to your plugins directory
 2. Activate the plugin through the \'Plugins\' menu in WordPress
 3. Update settings and, Enjoy!
+
+#Notice
+I am still updating this plugin ( my first one ), and will try to upload it to Wordpress plugins repository soon. 
+Thanks for your understanding.
