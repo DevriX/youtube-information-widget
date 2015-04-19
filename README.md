@@ -20,3 +20,4 @@ This plugin allows you to embed information about your YouTube channel, includin
 #Notice
 I am still updating this plugin ( my first one ), and will try to upload it to Wordpress plugins repository soon. 
 Thanks for your understanding.
+YouTube API v2 is deprecated, so will update the code later, working with V3.0 (https://developers.google.com/youtube/v3/)
