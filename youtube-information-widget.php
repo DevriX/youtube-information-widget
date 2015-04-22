@@ -327,7 +327,7 @@ function ytio_last_uploads() {
         foreach ( $json_data->items as $item ) {
 			$id = $item->id->videoId;
 			echo '<iframe id="ytplayer" type="text/html" width="auto" height="auto" 
-                src="http://www.youtube.com/embed/' . $id . '?rel=0&showinfo=1"
+                src="//www.youtube.com/embed/' . $id . '?rel=0&showinfo=1"
                 frameborder="0" allowfullscreen></iframe><br class="clear" />';
 		}
 		if(empty( $id ) ) {
@@ -348,7 +348,7 @@ function ytio_popular_uploads() {
         foreach ( $json_data->items as $item ) {
 			$id = $item->id->videoId;
 			echo '<iframe id="ytplayer" type="text/html" width="auto" height="auto" 
-                src="http://www.youtube.com/embed/' . $id . '?rel=0&showinfo=1"
+                src="//www.youtube.com/embed/' . $id . '?rel=0&showinfo=1"
                 frameborder="0" allowfullscreen></iframe><br class="clear" />';
 		}
 		if(empty( $id ) ) {
