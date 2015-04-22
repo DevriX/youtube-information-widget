@@ -9,6 +9,12 @@
 	border: 1px solid #EDE0E0;
 	display: block;
 	float: left;
+	max-width: 100%;
+}
+#ytio-container p {
+	padding: 0.2em;
+	line-height: 2.2;
+	margin-bottom: 0.5em;
 }
 #ytio-container strong {
 	font-weight: bold;
@@ -127,7 +133,6 @@
 /* admin css */
 
 span.ytio-help {
-  display: none;
 	background: #E7E7E7;	
 	padding: 0.4em 0.7em;
 	margin-left: 0.5em;
