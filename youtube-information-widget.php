@@ -3,7 +3,7 @@
 /*
 Plugin Name: YouTube Information Widget
 Plugin URI: http://wordpress.org/plugins/
-Description: This plugin allows you to embed information about your YouTube channel, including the last uploads, popular uploads, channel statistics including subscribers count, views count, and the about information, and also, a subscribe button next to your channel icon. comes with a settings page where you can control your output..
+Description: this plugin allows users to embed their YouTube channels/accounts content including last 5 videos, and statistics about them.
 Author: Samuel Elh
 Version: 1.0
 Author URI: http://go.elegance-style.com/sam
@@ -57,7 +57,7 @@ function ytio_settings_page() {
 		
 		<tr id="ytio-help-user" class="ytio-help">
 		<th scope="row"></th>
-		<td class="ytio-help">Help message here</td>
+		<td class="ytio-help">Help message here https://support.google.com/youtube/answer/3250431?hl=en</td>
 		</tr>
 		
 		
@@ -151,7 +151,7 @@ function ytio_max_res() {
 
 function ytio_max_res_msg() {
 	if(empty(get_option('ytio_max_results'))) {
-		return esc_attr( 'Current setting: 2 (default)' );
+		return 'Current setting: <u>2</u> (default)';
 	}
 }
 
@@ -165,7 +165,7 @@ function ytio_embed_width_ret() {
 
 function ytio_embed_width_ret_msg() {
 	if(empty(get_option('ytio_embed_width'))) {
-		return esc_attr( 'Current setting: auto (default)' );
+		return 'Current setting: <u>auto</u> (default)';
 	}
 }
 
@@ -179,78 +179,203 @@ function ytio_embed_height_ret() {
 
 function ytio_embed_height_ret_msg() {
 	if(empty(get_option('ytio_embed_height'))) {
-		return esc_attr( 'Current setting: auto (default)' );
+		return 'Current setting: <u>auto</u> (default)';
 	}
 }
+
+// NEW DATA BEGINS BASED ON V3 OF YOUTUBE API
+
+
+function ytio_user_or_id() {
+	if(empty(get_option('ytio_username'))) {
+		return '&id=';
+	} else {
+		return '&forUsername=';
+}
+}
+
+function ytio_api_1() {
+	return 'https://www.googleapis.com/youtube/v3/channels?part=snippet'. ytio_user_or_id(). ytio_user_id(). '&key=AIzaSyB9OPUPAtVh3_XqrByTwBTSDrNzuPZe8fo';
+}
+
+function ytio_channel_id() {
+	$url =  ytio_api_1();
+	$json = file_get_contents($url);
+	$json_data = json_decode($json, false);
+	return $json_data->items[0]->id;
+}
+
+function ytio_name() {
+	$url =  ytio_api_1();
+	$json = file_get_contents($url);
+	$json_data = json_decode($json, false);
+	echo $json_data->items[0]->snippet->title;
+}
+
+function ytio_about_summary() {
+	$url =  ytio_api_1();
+	$json = file_get_contents($url);
+	$json_data = json_decode($json, false);
+	if(empty( $json_data->items[0]->snippet->description )) {
+		return false;
+	} else {
+		echo '<strong>About:</strong><br class="clear" />'. $json_data->items[0]->snippet->description;
+	}
+}
+
+function ytio_thumb() {
+	$url =  ytio_api_1();
+	$json = file_get_contents($url);
+	$json_data = json_decode($json, false);
+	echo $json_data->items[0]->snippet->thumbnails->high->url;
+}
+
+function ytio_api_2() {
+	return 'https://www.googleapis.com/youtube/v3/channels?part=statistics'. ytio_user_or_id(). ytio_user_id(). '&key=AIzaSyB9OPUPAtVh3_XqrByTwBTSDrNzuPZe8fo';
+}
+
+
+function ytio_view_count() {
+	$url =  ytio_api_2();
+	$json = file_get_contents($url);
+	$json_data = json_decode($json, false);
+	$num = $json_data->items[0]->statistics->viewCount;
+		if(empty ($num) ) {
+			return false;
+		} else {
+			if( $num < 1000 ) return $num;
+			$x = round($num);
+			$x_number_format = number_format($x);
+			$x_array = explode(',', $x_number_format);
+			$x_parts = array(' thousand', ' million', ' billion', ' trillion');
+			$x_count_parts = count($x_array) - 1;
+			$x_display = $x;
+			$x_display = $x_array[0] . ((int) $x_array[1][0] !== 0 ? '.' . $x_array[1][0] : '');
+			$x_display .= $x_parts[$x_count_parts - 1];
+			$msg = '<p><strong>Total upload views:</strong><br class="clear" />';
+			return  $msg . $x_display . '</p>';
+		}
+}
+
+function ytio_subs_count() {
+	$url =  ytio_api_2();
+	$json = file_get_contents($url);
+	$json_data = json_decode($json, false);
+	$num = $json_data->items[0]->statistics->subscriberCount;
+		if(empty ($num) ) {
+			return false;
+		} else {
+			if( $num < 1000 ) return $num;
+			$x = round($num);
+			$x_number_format = number_format($x);
+			$x_array = explode(',', $x_number_format);
+			$x_parts = array(' thousand', ' million', ' billion', ' trillion');
+			$x_count_parts = count($x_array) - 1;
+			$x_display = $x;
+			$x_display = $x_array[0] . ((int) $x_array[1][0] !== 0 ? '.' . $x_array[1][0] : '');
+			$x_display .= $x_parts[$x_count_parts - 1];
+			echo  '<p><strong>Total subscribers:</strong><br class="clear" />'. $x_display . '</p>';
+		}
+}
+
+function ytio_comment_count() {
+	$url =  ytio_api_2();
+	$json = file_get_contents($url);
+	$json_data = json_decode($json, false);
+	$num = $json_data->items[0]->statistics->commentCount;
+		if(empty ($num) ) {
+			return false;
+		} else {
+			if( $num < 1000 ) return $num;
+			$x = round($num);
+			$x_number_format = number_format($x);
+			$x_array = explode(',', $x_number_format);
+			$x_parts = array(' thousand', ' million', ' billion', ' trillion');
+			$x_count_parts = count($x_array) - 1;
+			$x_display = $x;
+			$x_display = $x_array[0] . ((int) $x_array[1][0] !== 0 ? '.' . $x_array[1][0] : '');
+			$x_display .= $x_parts[$x_count_parts - 1];
+			return  '<p><strong>Total comments:</strong><br class="clear" />'. $x_display . '</p>';
+		}
+}
+
+function ytio_video_count() {
+	$url =  ytio_api_2();
+	$json = file_get_contents($url);
+	$json_data = json_decode($json, false);
+	$num = $json_data->items[0]->statistics->videoCount;
+		if(empty ($num) ) {
+			return false;
+		} else {
+			if( $num < 1000 ) return $num;
+			$x = round($num);
+			$x_number_format = number_format($x);
+			$x_array = explode(',', $x_number_format);
+			$x_parts = array(' thousand', ' million', ' billion', ' trillion');
+			$x_count_parts = count($x_array) - 1;
+			$x_display = $x;
+			$x_display = $x_array[0] . ((int) $x_array[1][0] !== 0 ? '.' . $x_array[1][0] : '');
+			$x_display .= $x_parts[$x_count_parts - 1];
+			$msg = '<p><strong>Total uploads:</strong><br class="clear" />';
+			return  $msg . $x_display . '</p>';
+		}
+}
+
+function ytio_api_3() {
+	return 'https://www.googleapis.com/youtube/v3/search?order=date&part=snippet&channelId='. ytio_channel_id(). '&maxResults='. ytio_max_res() .'&key=AIzaSyB9OPUPAtVh3_XqrByTwBTSDrNzuPZe8fo&type=video';
+}
+
+function ytio_last_uploads() {
+        $url = ytio_api_3();
+        $json = file_get_contents($url);
+        $json_data = json_decode($json, false);
+        foreach ( $json_data->items as $item ) {
+			$id = $item->id->videoId;
+			echo '<iframe id="ytplayer" type="text/html" width="auto" height="auto" 
+                src="http://www.youtube.com/embed/' . $id . '?rel=0&showinfo=1"
+                frameborder="0" allowfullscreen></iframe><br class="clear" />';
+		}
+		if(empty( $id ) ) {
+			echo '<p>Apologize, nothing found for this channel.</p>';
+		} else {
+			echo '<a href="'. ytio_uploads_more_link(). '" title="more uploads of this channel on YouTube">Browse more »</a>';
+		}
+}
+	
+function ytio_api_4() {
+	return 'https://www.googleapis.com/youtube/v3/search?order=viewCount&part=snippet&channelId='. ytio_channel_id(). '&maxResults='. ytio_max_res() .'&key=AIzaSyB9OPUPAtVh3_XqrByTwBTSDrNzuPZe8fo&type=video';
+}
+
+function ytio_popular_uploads() {
+        $url = ytio_api_4();
+        $json = file_get_contents($url);
+        $json_data = json_decode($json, false);
+        foreach ( $json_data->items as $item ) {
+			$id = $item->id->videoId;
+			echo '<iframe id="ytplayer" type="text/html" width="auto" height="auto" 
+                src="http://www.youtube.com/embed/' . $id . '?rel=0&showinfo=1"
+                frameborder="0" allowfullscreen></iframe><br class="clear" />';
+		}
+		if(empty( $id ) ) {
+			echo '<p>Apologize, nothing found for this channel.</p>';
+		} else {
+			echo '<a href="'. ytio_popular_more_link(). '" title="more popular uploads of this channel on YouTube">Browse more »</a>';
+		}
+}
+
+// end of api urls basted on V3 YOUTUBE API
+
 
 function ytio_api_url() {
 	return 'http://gdata.youtube.com/feeds/api/users/'. ytio_user_id() . '?v=2.1&prettyprint=true';
 }
 
-function ytio_about_summary() {
-    $xmlData = file_get_contents( ytio_api_url() ); 
-    $xml = new SimpleXMLElement($xmlData) or die("Error");
-	if(empty( $xml->summary )) {
-		return false;
-	} else {
-		echo '<strong>About:</strong><br class="clear" />'. $xml->summary . '<br class="clear" />';
-	}
-}
-
-// gets total subscribers of a channel in k, m, b, t mode
-
-function ytio_subs_count() {
-	$xmlData = file_get_contents( ytio_api_url() ); 
-	$xmlData = str_replace('yt:', 'yt', $xmlData); 
-	$xml = new SimpleXMLElement($xmlData); 
-	$ytio_subs = $xml->ytstatistics['subscriberCount'];
-	$num = $ytio_subs;
-		if(empty($num) || $num < 1000) return $num;
-        $x = round($num);
-        $x_number_format = number_format($x);
-        $x_array = explode(',', $x_number_format);
-        $x_parts = array(' thousand', ' million', ' billion', ' trillion');
-        $x_count_parts = count($x_array) - 1;
-        $x_display = $x;
-        $x_display = $x_array[0] . ((int) $x_array[1][0] !== 0 ? '.' . $x_array[1][0] : '');
-        $x_display .= $x_parts[$x_count_parts - 1];
-        return  $x_display;
-}
-
-// gets total subscribers of a channel in k, m, b, t mode
-
-function ytio_view_count() {
-	$xmlData = file_get_contents( ytio_api_url() ); 
-	$xmlData = str_replace('yt:', 'yt', $xmlData); 
-	$xml = new SimpleXMLElement($xmlData); 
-	$ytio_view = $xml->ytstatistics['totalUploadViews'];
-	$num = $ytio_view;
-		if(empty($num) || $num < 1000) return $num;
-        $x = round($num);
-        $x_number_format = number_format($x);
-        $x_array = explode(',', $x_number_format);
-        $x_parts = array(' thousand', ' million', ' billion', ' trillion');
-        $x_count_parts = count($x_array) - 1;
-        $x_display = $x;
-        $x_display = $x_array[0] . ((int) $x_array[1][0] !== 0 ? '.' . $x_array[1][0] : '');
-        $x_display .= $x_parts[$x_count_parts - 1];
-        return  $x_display;
-}
-
-function ytio_thumb() {
-	$xmlData = file_get_contents( ytio_api_url() ); 
-	$xmlData = str_replace('media:', 'media', $xmlData); 
-	$xml = new SimpleXMLElement($xmlData); 
-	$ytio_thumb = $xml->mediathumbnail['url'];
-	echo $ytio_thumb;
-}
-
-function ytio_name_ret() {
+function ytio_name_ret_del() {
     $xmlData = file_get_contents( ytio_api_url() ); 
     $xml = new SimpleXMLElement($xmlData) or die("Error"); 
     return $xml;
 }
-function ytio_name() {
+function ytio_name_del() {
     $yt = ytio_name_ret();
     return $yt->author->name;
 }
@@ -276,13 +401,7 @@ function ytio_subs_button() {
 if(empty(get_option('ytio_username'))) {
 	echo 'id';
 }
-?>="<?php
-if(empty(get_option('ytio_username'))) {
-    echo esc_attr( get_option('ytio_id') );
-} else {
-echo esc_attr( get_option('ytio_username') );
-}
-?>" data-layout="default" data-count="default">
+?>="<?php echo ytio_user_id(); ?>" data-layout="default" data-count="default">
 	<a href="<?php echo 'http://www.youtube.com/'. ytio_user_or_channel(). '/'. ytio_user_id(); ?>?sub_confirmation=1">subscribe</a>
 </div>
 <?php
@@ -292,69 +411,6 @@ function ytio_channel_link() {
 	echo 'http://www.youtube.com/'. ytio_user_or_channel(). '/'. ytio_user_id();
 }
 
-// last uploads
-
-function ytio_last_uploads() {
-for($i = 0; $i < 20; ){
-        error_reporting(E_ALL);
-        $feedURL = 'http://gdata.youtube.com/feeds/api/users/' . ytio_user_id(). '/uploads?max-results='. ytio_max_res();
-        $sxml = simplexml_load_file($feedURL);
-        foreach ($sxml->entry as $entry) {
-                $media = $entry->children('media', true);
-                $url = (string)$media->group->player->attributes()->url;
-                $thumb = (string)$media->group->thumbnail->attributes()->url;
-				$watch = (string)$media->group->player->attributes()->url;
-				$title = (string)$media->group->title;
-				$height = esc_attr( ytio_embed_height_ret() );
-				$width = esc_attr( ytio_embed_width_ret() );
-				$query_string = parse_url(htmlspecialchars_decode($url), PHP_URL_QUERY); // decode `&amp;` to `&`
-				parse_str($query_string, $data);
-				$dataurl = esc_attr( $data['v'] );
-                $index = strrpos($url, "&");
-                $url = substr($url, 0, $index);
-                $index = strrpos($url, "watch");
-                $url = substr($url, 0, $index) . "v/" . substr($url, $index + 8, strlen($url) - ($index + 8));
-                echo '<iframe id="ytplayer" type="text/html" width="' . $width . '" height="' . $height . '" 
-				src="http://www.youtube.com/embed/' . $dataurl . '?rel=0&showinfo=1"
-				frameborder="0" showinfo allowfullscreen></iframe><br class="clear" />';
-        }
-		$i++;
-		break;
-}
-	echo '<a href="' . ytio_uploads_more_link(). '" title="Browse more ' . ytio_name(). ' popular videos" target="_blank">Browse more »</a>';
-}
-
-// Popular uploads
-
-function ytio_popular_uploads() {
-for($i = 0; $i < 20; ){
-        error_reporting(E_ALL);
-        $feedURL = 'http://gdata.youtube.com/feeds/api/users/' . ytio_user_id(). '/uploads?max-results='. ytio_max_res().'&orderby=viewCount';
-        $sxml = simplexml_load_file($feedURL);
-        foreach ($sxml->entry as $entry) {
-                $media = $entry->children('media', true);
-                $url = (string)$media->group->player->attributes()->url;
-                $thumb = (string)$media->group->thumbnail->attributes()->url;
-				$watch = (string)$media->group->player->attributes()->url;
-				$title = (string)$media->group->title;
-				$height = esc_attr( ytio_embed_height_ret() );
-				$width = esc_attr( ytio_embed_width_ret() );
-				$query_string = parse_url(htmlspecialchars_decode($url), PHP_URL_QUERY); // decode `&amp;` to `&`
-				parse_str($query_string, $data);
-				$dataurl = esc_attr( $data['v'] );
-				$index = strrpos($url, "&");
-                $url = substr($url, 0, $index);
-                $index = strrpos($url, "watch");
-                $url = substr($url, 0, $index) . "v/" . substr($url, $index + 8, strlen($url) - ($index + 8));
-                echo '<iframe id="ytplayer" type="text/html" width="' . $width . '" height="' . $height . '" 
-				src="http://www.youtube.com/embed/' . $dataurl . '?rel=0&showinfo=1"
-				frameborder="0" showinfo allowfullscreen></iframe><br class="clear" />';
-        }
-		$i++;
-		break;
-}
-	echo '<a href="' . ytio_popular_more_link(). '" title="Browse more ' . ytio_name(). ' popular videos" target="_blank">Browse more »</a>';
-}
 
 add_action( 'wp_enqueue_scripts', 'ytio_enq_scripts' );
 
@@ -388,15 +444,16 @@ function ytio_enq_admin_styles() {
     wp_enqueue_style('ytio-admin-css', plugin_dir_url( __FILE__ ) . 'files/style.css' );
 }
 
-
 function ytio_widget() {
 
 	if(empty(get_option('ytio_username')) && empty(get_option('ytio_id'))) {
 		?>
 
-<div id="ytio-container" style="padding: 1em;">
-	<h2>Please fill out a YouTube username or channel ID first</h2>
-	<sub>– YouTube information widget plugin</sub>
+<div id="ytio-container">
+	<p>
+		<h2>Please fill out a YouTube username or channel ID first</h2>
+		<sub>– YouTube information widget plugin</sub>
+	</p>
 </div>
 <br style="clear: both" />
 
@@ -404,7 +461,7 @@ function ytio_widget() {
 		?>
 
 <div id="ytio-container">
-	<div id="ytio-avatar">
+	<section id="ytio-avatar">
 		<div id="ytio-left" class="inline">
 			<a href="<?php ytio_channel_link(); ?>" title="<?php echo ytio_name(); ?>">
 				<img src="<?php ytio_thumb(); ?>" height="90" width="90" alt="<?php echo ytio_name(); ?>" />
@@ -416,9 +473,9 @@ function ytio_widget() {
 			</a><br  class="clear" />
 			<?php ytio_subs_button(); ?>
 		</div>
-	</div>
+	</section>
 
-	<div id="ytio-uploads">
+	<section id="ytio-uploads">
 		<div id="ytio-switch">
 			<span id="sw-st" class="active">Last uploads</span>
 			<span id="sw-nd">Popular uploads</span>
@@ -433,18 +490,17 @@ function ytio_widget() {
 			</div>
 			<div id="ytio-stats" class="ytio-hid">
 				<?php ytio_about_summary(); ?>
-				<strong>Total subscribers:</strong><br class="clear" />
 				<?php echo ytio_subs_count(); ?>
-				<br class="clear" />			
-				<strong>Total upload views:</strong><br class="clear" />				
+				<?php echo ytio_video_count(); ?>
 				<?php echo ytio_view_count(); ?>
-				<br class="clear" />
+				<?php echo ytio_comment_count(); ?>
 			</div>
 		</div>
-	</div>
+	</section>
 </div>
 <!-- #ytio-container -->
 <br style="clear: both;"></br>
+
 <?php
 }
 }
@@ -505,7 +561,7 @@ public function update( $new_instance, $old_instance ) {
 $instance = array();
 $instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
 return $instance;
- ytio_last_uploads();
+// ytio_last_uploads();
 }
 }
 
