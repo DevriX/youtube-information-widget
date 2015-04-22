@@ -1,0 +1,116 @@
+/* Copyright YouTube information Widget Plugin, by Samuel Elh ( sam at elegance-style.com ) */
+
+#ytio-container * {
+	margin: 0;
+	padding: 0;
+	font-size: 1em;
+	font-family: inherit;
+	transition: All .4s, visibility 0.2s linear;
+}
+#ytio-container {
+	border: 1px solid #EDE0E0;
+	display: block;
+	float: left;
+	max-width: 100%;
+}
+#ytio-container p {
+	padding: 0.2em;
+	line-height: 2.2;
+	margin-bottom: 0.5em;
+}
+#ytio-container strong {
+	font-weight: bold;
+}
+#ytio-container #ytio-uploads a {
+	line-height: 2;
+}
+#ytio-container #ytio-right a span {
+	line-height: 3.3em;
+}
+#ytio-container embed,
+#ytio-container img,
+#ytio-container object,
+#ytio-container video,
+#ytio-container iframe,
+#ytio-container param {
+	max-width: 100%;
+}
+#ytio-container #ytio-switch {
+	display: block;
+	overflow: hidden;
+	text-align: center;
+	border: 1px solid #EDE0E0;
+	border-width: 1px 0;
+	text-align: center;
+}
+
+#ytio-container #ytio-switch span {
+	float: left;
+	cursor: pointer;
+	padding: 0.55em;
+	border: 1px solid transparent;
+	border-width: 1px 0;
+	line-height: 2;
+}
+
+#ytio-container #ytio-switch span.active {
+	border-top: 1px solid #E62117;
+	font-weight: bold;
+}
+
+#ytio-container #ytio-uploads {  
+	overflow: hidden;
+	position: relative;
+	display: block;
+}
+
+
+#ytio-container .ytio-vis {
+	display: block;
+}
+#ytio-container .ytio-hid {
+	display: none;
+}
+
+#ytio-container br.clear {
+	clear: both;
+}
+
+#ytio-container #ytio-avatar {
+    display: block;
+    overflow: hidden;
+    padding: .5em;
+    text-align: center;
+}
+#ytio-container #ytio-avatar div.inline {
+	display: inline-block;
+	margin: 0.5em;
+	vertical-align: top;
+}
+#ytio-container #ytio-avatar #ytio-left {
+    /* float: left; */
+    /* margin: .5em; */
+    /* display: inline-block; */
+}
+#ytio-container #ytio-avatar #ytio-right {
+    text-align: left;
+}
+#ytio-container #ytio-avatar #ytio-left img {     
+	position: relative;
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	border-radius: 50%;        
+	-webkit-box-shadow: 0 0 0 3px #fff, 0 0 0 4px #D0D2D1, 0 2px 5px 4px rgba(0,0,0,.2);      
+	-moz-box-shadow: 0 0 0 3px #fff, 0 0 0 4px #D0D2D1, 0 2px 5px 4px rgba(0,0,0,.2);      
+	box-shadow: 0 0 0 3px #fff, 0 0 0 4px #D0D2D1, 0 2px 5px 4px rgba(0,0,0,.2);
+}
+
+@media screen and (max-width: 480px),
+@media only screen 
+  and (max-device-width: 480px),
+@media screen and (max-device-width: 480px)  {
+	#ytio-container #ytio-uploads object {
+		width: 100%;
+		height: auto;
+	}
+}
