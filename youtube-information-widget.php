@@ -16,6 +16,43 @@ function ytio_create_menu() {
 	add_action( 'admin_init', 'register_ytio_settings' );
 }
 
+
+add_action('admin_menu', 'ytio_cach');
+
+function ytio_cach() {
+	add_options_page( 'Cache cleared!', null, 'manage_options', 'ytio_clear_cache', 'ytio_clear_cache_page' );
+	
+}
+
+function ytio_clear_cache_page() {
+?>
+<div class="wrap ytio">
+<?php
+	delete_transient( 'ytio_channel_id_tr' );
+	delete_transient( 'ytio_name_tr' );
+	delete_transient( 'ytio_about_summary_tr' );
+	delete_transient( 'ytio_thumb_tr' );
+	delete_transient( 'ytio_view_count_tr' );
+	delete_transient( 'ytio_subs_count_tr' );
+	delete_transient( 'ytio_comment_count_tr' );
+	delete_transient( 'ytio_video_count_tr' );
+	delete_transient( 'ytio_last_uploads_tr' );
+	delete_transient( 'ytio_popular_uploads_tr' );
+?>
+
+
+<div class="wrap">
+
+	<div style="">Cache successfully emptied! click to go back to YouTube information widget settings page.</div>
+	
+	<a href="options-general.php?page=ytio_settings" style="background: #2ea2cc;padding: .7em 1em;color: #fff;line-height: 4;text-decoration: none;">Go back</a>
+
+</div>
+<?php 
+}
+
+
+
 function ytio_settings_link( $links ) {
     $settings_link = '<a href="options-general.php?page=ytio_settings">' . __( 'Settings' ) . '</a>';
     array_push( $links, $settings_link );
@@ -38,7 +75,7 @@ function ytio_settings_page() {
 <fieldset  style="border: 1px solid #D5D5D5; padding: 1em;">
 	<legend style="padding: 0 1em;font-weight: 600;text-decoration: underline;">YouTube Information Widget Settings</legend>
 
-<form method="post" action="options.php">
+<form method="post" action="options.php" id="ytio-form">
     <?php settings_fields( 'ytio-settings-group' ); ?>
     <?php do_settings_sections( 'ytio-settings-group' ); ?>
     <table class="form-table">
@@ -109,7 +146,14 @@ function ytio_settings_page() {
 		</tr>
 		
     </table>
-    
+	
+	<br />
+	<div id="ytio-clear-cache" style="display: none;">
+		<a href="options-general.php?page=ytio_clear_cache">Clear cache</a>
+		<img src="<?php echo esc_url( home_url( '/' ) ); ?>wp-includes/images/spinner.gif">
+		<span style="display: none;">Cleared! now save your changes :)</span>
+	</div>
+
     <?php submit_button(); ?>
 
 </form>
@@ -187,28 +231,42 @@ function ytio_user_or_id() {
 	}
 }
 
+
+
 function ytio_api_1() {
 	return 'https://www.googleapis.com/youtube/v3/channels?part=snippet'. ytio_user_or_id(). ytio_user_id(). '&key=AIzaSyB9OPUPAtVh3_XqrByTwBTSDrNzuPZe8fo';
 }
 
 function ytio_channel_id() {
-	$url =  ytio_api_1();
-	$json = file_get_contents($url);
-	$json_data = json_decode($json, false);
+	$json_data = get_transient('ytio_channel_id_tr');
+    if ($json_data === false) {
+        $url = ytio_api_1();
+        $json = file_get_contents($url);
+        $json_data = json_decode($json, false);
+        set_transient('ytio_channel_id_tr', $json_data, 3600);
+    }
 	return $json_data->items[0]->id;
 }
 
 function ytio_name() {
-	$url =  ytio_api_1();
-	$json = file_get_contents($url);
-	$json_data = json_decode($json, false);
+	$json_data = get_transient('ytio_name_tr');
+    if ($json_data === false) {
+        $url = ytio_api_1();
+        $json = file_get_contents($url);
+        $json_data = json_decode($json, false);
+        set_transient('ytio_name_tr', $json_data, 3600);
+    }
 	echo $json_data->items[0]->snippet->title;
 }
 
 function ytio_about_summary() {
-	$url =  ytio_api_1();
-	$json = file_get_contents($url);
-	$json_data = json_decode($json, false);
+	$json_data = get_transient('ytio_about_summary_tr');
+    if ($json_data === false) {
+        $url = ytio_api_1();
+        $json = file_get_contents($url);
+        $json_data = json_decode($json, false);
+        set_transient('ytio_about_summary_tr', $json_data, 3600);
+    }
 	if(empty( $json_data->items[0]->snippet->description )) {
 		return false;
 	} else {
@@ -217,9 +275,13 @@ function ytio_about_summary() {
 }
 
 function ytio_thumb() {
-	$url =  ytio_api_1();
-	$json = file_get_contents($url);
-	$json_data = json_decode($json, false);
+	$json_data = get_transient('ytio_thumb_tr');
+    if ($json_data === false) {
+        $url = ytio_api_1();
+        $json = file_get_contents($url);
+        $json_data = json_decode($json, false);
+        set_transient('ytio_thumb_tr', $json_data, 3600);
+    }
 	echo $json_data->items[0]->snippet->thumbnails->high->url;
 }
 
@@ -229,9 +291,13 @@ function ytio_api_2() {
 
 
 function ytio_view_count() {
-	$url =  ytio_api_2();
-	$json = file_get_contents($url);
-	$json_data = json_decode($json, false);
+	$json_data = get_transient('ytio_view_count_tr');
+    if ($json_data === false) {
+        $url = ytio_api_2();
+        $json = file_get_contents($url);
+        $json_data = json_decode($json, false);
+        set_transient('ytio_view_count_tr', $json_data, 3600);
+    }
 	$num = $json_data->items[0]->statistics->viewCount;
 	$msg = '<p><strong>Total upload views:</strong><br class="clear" />';
 		if(empty ($num) ) {
@@ -251,9 +317,13 @@ function ytio_view_count() {
 }
 
 function ytio_subs_count() {
-	$url =  ytio_api_2();
-	$json = file_get_contents($url);
-	$json_data = json_decode($json, false);
+	$json_data = get_transient('ytio_subs_count_tr');
+    if ($json_data === false) {
+        $url = ytio_api_2();
+        $json = file_get_contents($url);
+        $json_data = json_decode($json, false);
+        set_transient('ytio_subs_count_tr', $json_data, 3600);
+    }
 	$num = $json_data->items[0]->statistics->subscriberCount;
 	$msg = '<p><strong>Total subscribers:</strong><br class="clear" />';
 		if(empty ($num) ) {
@@ -273,9 +343,13 @@ function ytio_subs_count() {
 }
 
 function ytio_comment_count() {
-	$url =  ytio_api_2();
-	$json = file_get_contents($url);
-	$json_data = json_decode($json, false);
+    $json_data = get_transient('ytio_comment_count_tr');
+    if ($json_data === false) {
+        $url = ytio_api_2();
+        $json = file_get_contents($url);
+        $json_data = json_decode($json, false);
+        set_transient('ytio_comment_count_tr', $json_data, 3600);
+    }
 	$num = $json_data->items[0]->statistics->commentCount;
 	$msg = '<p><strong>Total comments:</strong><br class="clear" />';
 		if(empty ($num) ) {
@@ -295,9 +369,13 @@ function ytio_comment_count() {
 }
 
 function ytio_video_count() {
-	$url =  ytio_api_2();
-	$json = file_get_contents($url);
-	$json_data = json_decode($json, false);
+    $json_data = get_transient('ytio_video_count_tr');
+    if ($json_data === false) {
+        $url = ytio_api_2();
+        $json = file_get_contents($url);
+        $json_data = json_decode($json, false);
+        set_transient('ytio_video_count_tr', $json_data, 3600);
+    }
 	$num = $json_data->items[0]->statistics->videoCount;
 	$msg = '<p><strong>Total uploads:</strong><br class="clear" />';
 		if(empty ($num) ) {
@@ -321,43 +399,57 @@ function ytio_api_3() {
 }
 
 function ytio_last_uploads() {
+    $json_data = get_transient('ytio_last_uploads_tr');
+    if ($json_data === false) {
         $url = ytio_api_3();
         $json = file_get_contents($url);
         $json_data = json_decode($json, false);
-        foreach ( $json_data->items as $item ) {
-			$id = $item->id->videoId;
-			echo '<iframe id="ytplayer" type="text/html" width="auto" height="auto" 
-                src="//www.youtube.com/embed/' . $id . '?rel=0&showinfo=1"
-                frameborder="0" allowfullscreen></iframe><br class="clear" />';
-		}
-		if(empty( $id ) ) {
+        set_transient('ytio_last_uploads_tr', $json_data, 3600);
+    }
+    foreach ( $json_data->items as $item ) {
+        $id = $item->id->videoId;
+		$width = ytio_embed_width_ret();
+		$height = ytio_embed_height_ret();
+        echo '<iframe id="ytplayer" type="text/html" width="' . $width . '" height="' . $height . '" 
+            src="//www.youtube.com/embed/' . $id . '?rel=0&showinfo=1"
+            frameborder="0" allowfullscreen></iframe><br class="clear" />';
+    }
+	if(empty( $id ) ) {
 			echo '<p>Apologize, nothing found for this channel.</p>';
 		} else {
 			echo '<a href="'. ytio_uploads_more_link(). '" title="more uploads of this channel on YouTube">Browse more »</a>';
-		}
+	}
 }
 	
 function ytio_api_4() {
 	return 'https://www.googleapis.com/youtube/v3/search?order=viewCount&part=snippet&channelId='. ytio_channel_id(). '&maxResults='. ytio_max_res() .'&key=AIzaSyB9OPUPAtVh3_XqrByTwBTSDrNzuPZe8fo&type=video';
 }
 
+
+
 function ytio_popular_uploads() {
+    $json_data = get_transient('ytio_popular_uploads_tr');
+    if ($json_data === false) {
         $url = ytio_api_4();
         $json = file_get_contents($url);
         $json_data = json_decode($json, false);
-        foreach ( $json_data->items as $item ) {
-			$id = $item->id->videoId;
-			echo '<iframe id="ytplayer" type="text/html" width="auto" height="auto" 
-                src="//www.youtube.com/embed/' . $id . '?rel=0&showinfo=1"
-                frameborder="0" allowfullscreen></iframe><br class="clear" />';
-		}
-		if(empty( $id ) ) {
+        set_transient('ytio_popular_uploads_tr', $json_data, 3600);
+    }
+    foreach ( $json_data->items as $item ) {
+        $id = $item->id->videoId;
+		$width = ytio_embed_width_ret();
+		$height = ytio_embed_height_ret();
+        echo '<iframe id="ytplayer" type="text/html" width="' . $width . '" height="' . $height . '" 
+            src="//www.youtube.com/embed/' . $id . '?rel=0&showinfo=1"
+            frameborder="0" allowfullscreen></iframe><br class="clear" />';
+    }
+	if(empty( $id ) ) {
 			echo '<p>Apologize, nothing found for this channel.</p>';
-		} else {
+	} else {
 			echo '<a href="'. ytio_popular_more_link(). '" title="more popular uploads of this channel on YouTube">Browse more »</a>';
-		}
-}
+	}
 
+}
 
 function ytio_info() {
 
@@ -437,6 +529,43 @@ function ytio_enq_admin_styles() {
     wp_enqueue_style('ytio-admin-css', plugin_dir_url( __FILE__ ) . 'includes/admin/style.css' );
 }
 
+
+// DB
+
+
+register_activation_hook( __FILE__, 'my_plugin_create_db' );
+
+function my_plugin_create_db() {
+	global $wpdb;
+	$version = get_option( 'ytio_version', '1.0' );
+	$charset_collate = $wpdb->get_charset_collate();
+	$table_name = $wpdb->prefix . 'ytio_db';
+	$sql = "CREATE TABLE $table_name (
+	id mediumint(9) NOT NULL AUTO_INCREMENT,
+	time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+	views smallint(5) NOT NULL,
+	clicks smallint(5) NOT NULL,
+	UNIQUE KEY id (id)
+	) $charset_collate;";
+	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	dbDelta( $sql );
+	if ( version_compare( $version, '2.0' ) < 0 ) {
+		$sql = "CREATE TABLE $table_name (
+		id mediumint(9) NOT NULL AUTO_INCREMENT,
+		time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+		views smallint(5) NOT NULL,
+		clicks smallint(5) NOT NULL,
+		blog_id smallint(5) NOT NULL,
+		UNIQUE KEY id (id)
+		) $charset_collate;";
+		dbDelta( $sql );
+		update_option( 'ytio_version', '2.0' );
+	}
+}
+
+
+// END BD
+
 function ytio_widget() {
 
 	if(empty(esc_attr( get_option('ytio_username') )) && empty(esc_attr( get_option('ytio_id') ))) {
@@ -450,7 +579,7 @@ function ytio_widget() {
 
 <?php } else {
 		?>
-
+		
 <div id="ytio-container">
 	<section id="ytio-avatar">
 		<div id="ytio-left" class="inline">
