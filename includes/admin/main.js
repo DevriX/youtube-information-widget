@@ -23,24 +23,28 @@ $(document).ready(function(){
 		$('#ytio-help-height').toggleClass("ytio-hid");
 	})
 	$('#ytio-form input').change(function() {
-		$('#ytio-form input[type="submit"]').attr( "disabled", "disabled" );
-		$('#ytio-clear-cache').css('display','block');
+		$('#ytio-form input[type="submit"]').prop("disabled", "disabled");
+		$('#ytio-submit img').css('display','inline-block');
+		$('#ytio-submit span').css('display','none');
+		$.ajax({
+			url : "options-general.php?page=ytio_clear_cache",
+			type : "post",
+			success: function(){
+				$('#ytio-form input[type="submit"]').prop("disabled", false);
+				$('#ytio-submit img').css('display','none');
+				$('#ytio-submit span').css('display','inline-block');
+			}
+		})
 	})
-	
-	$('#ytio-clear-cache a').click(function(){
-	$('#ytio-clear-cache img').css('display','inline-block');
-	$.ajax({
+	$('a.ytio-cc-alt').click(function() {
+		$.ajax({
 		url : "options-general.php?page=ytio_clear_cache",
 		type : "post",
-		success: function(){
-			$('#ytio-form input[type="submit"]').prop("disabled", false);
-			$('#ytio-clear-cache img').css('display','none');
-			$('#ytio-clear-cache span').css('display','inline-block');
-			setTimeout(function() {
-				$('#ytio-clear-cache,#ytio-clear-cache img,#ytio-clear-cache span').css('display','none');
-			}, 5000);
-		}
+			success: function(){
+				alert("Done! don't forget to save changes.");
+			}
+		})
+		event.preventDefault();
 	})
-	event.preventDefault();
-	})
+	
 })
