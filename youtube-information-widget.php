@@ -2,7 +2,7 @@
 
 /*
 Plugin Name: YouTube Information Widget
-Plugin URI: http://wordpress.org/plugins/
+Plugin URI: https://wordpress.org/plugins/youtube-information-widget
 Description: This plugin allows you to embed information about your YouTube channel, including the last uploads, popular uploads, channel statistics including subscribers count, views count, and the about information, and also, a subscribe button next to your channel icon. comes with a settings page where you can update your options.
 Author: Samuel Elh
 Version: 1.0
@@ -119,7 +119,7 @@ function ytio_settings_page() {
 		
 		
 		<tr valign="top">
-        <th scope="row"><label for="ytio_em_width">Embed width</label></th>
+        <th scope="row"><label for="ytio_em_width">Video width</label></th>
         <td><input type="number" name="ytio_embed_width" value="<?php echo ytio_embed_width_ret(); ?>" id="ytio_em_width" min="100" max="2000" />
 		<span class="ytio-help ytio-help-width">help</span><br class="clear" />
 		<sub><?php echo ytio_embed_width_ret_msg(); ?></sub>
@@ -133,7 +133,7 @@ function ytio_settings_page() {
 		
 		
         <tr valign="top">
-        <th scope="row"><label for="ytio_em_height">Embed height</label></th>
+        <th scope="row"><label for="ytio_em_height">Video height</label></th>
         <td><input type="number" name="ytio_embed_height" value="<?php echo ytio_embed_height_ret(); ?>" id="ytio_em_height" min="100" max="2000" />
 		<span class="ytio-help ytio-help-height">help</span><br class="clear" />
 		<sub><?php echo ytio_embed_height_ret_msg(); ?></sub>
@@ -147,23 +147,27 @@ function ytio_settings_page() {
 		
     </table>
 	
+	<a href="options-general.php?page=ytio_clear_cache" class="ytio-cc-alt" style="display: inline-block!important;">Clear cache</a>	
 	<br />
-	<div id="ytio-clear-cache" style="display: none;">
-		<a href="options-general.php?page=ytio_clear_cache">Clear cache</a>
-		<img src="<?php echo esc_url( home_url( '/' ) ); ?>wp-includes/images/spinner.gif">
-		<span style="display: none;">Cleared! now save your changes :)</span>
-	</div>
-
-    <?php submit_button(); ?>
+	<p id="ytio-submit" class="submit">
+		<input type="submit" name="submit" id="submit" class="button button-primary" value="Save Changes"  />
+		<img src="<?php echo esc_url( home_url( '/' ) ); ?>wp-includes/images/spinner.gif"></img>
+		<span style="display: none;">Don't forget to save changes.</span>
+	</p>
 
 </form>
 
 </fieldset>
 <br />
 
-<fieldset style="border: 1px solid #D5D5D5; padding: 1em;">
+<fieldset style="border: 1px solid #D5D5D5; padding: 1em;width: 48%;float: left;">
 	<legend style="padding: 0 1em;font-weight: 600;text-decoration: underline;">Widget Preview:</legend>
 	<?php ytio_widget(); ?>
+</fieldset>
+<fieldset style="border: 1px solid #D5D5D5; padding: 1em;margin-left: .5em;width: 42%;float: left;line-height: 2;">
+	<legend style="padding: 0 1em;font-weight: 600;text-decoration: underline;">Thanks!</legend>Thank you for using our plugin. You liked it? then rate it! we depened on your rating and reviews to improve the plugin.<br style="clear: both;">
+	<a href="https://wordpress.org/support/plugin/youtube-information-widget">Support forum on WordPress.org</a><br style="clear: both;"> 
+	<a href="https://wordpress.org/support/view/plugin-reviews/youtube-information-widget?rate=5#postform">Rate &amp; Review this plugin</a>
 </fieldset>
 
 </div>
@@ -410,10 +414,12 @@ function ytio_last_uploads() {
         $id = $item->id->videoId;
 		$width = ytio_embed_width_ret();
 		$height = ytio_embed_height_ret();
+		$thumb = $item->snippet->thumbnails->high->url;
+		$alt = $item->snippet->title;
         echo '<iframe id="ytplayer" type="text/html" width="' . $width . '" height="' . $height . '" 
             src="//www.youtube.com/embed/' . $id . '?rel=0&showinfo=1"
             frameborder="0" allowfullscreen></iframe><br class="clear" />';
-    }
+		}
 	if(empty( $id ) ) {
 			echo '<p>Apologize, nothing found for this channel.</p>';
 		} else {
