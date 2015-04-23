@@ -43,7 +43,6 @@
 	border-width: 1px 0;
 	text-align: center;
 }
-
 #ytio-container #ytio-switch span {
 	float: left;
 	cursor: pointer;
@@ -52,30 +51,28 @@
 	border-width: 1px 0;
 	line-height: 2;
 }
-
 #ytio-container #ytio-switch span.active {
 	border-top: 1px solid #E62117;
 	font-weight: bold;
 }
-
 #ytio-container #ytio-uploads {  
 	overflow: hidden;
 	position: relative;
 	display: block;
 }
-
-
+a[href^="options-general.php?page=ytio_clear_cache"],
+a[href="options-general.php?page=ytio_clear_cache"] {
+    display: none!important;
+}
 #ytio-container .ytio-vis {
 	display: block;
 }
 #ytio-container .ytio-hid {
 	display: none;
 }
-
 #ytio-container br.clear {
 	clear: both;
 }
-
 #ytio-container #ytio-avatar {
     display: block;
     overflow: hidden;
@@ -86,11 +83,6 @@
 	display: inline-block;
 	margin: 0.5em;
 	vertical-align: top;
-}
-#ytio-container #ytio-avatar #ytio-left {
-    /* float: left; */
-    /* margin: .5em; */
-    /* display: inline-block; */
 }
 #ytio-container #ytio-avatar #ytio-right {
     text-align: left;
@@ -109,8 +101,5 @@
 @media only screen 
   and (max-device-width: 480px),
 @media screen and (max-device-width: 480px)  {
-	#ytio-container #ytio-uploads object {
-		width: 100%;
-		height: auto;
-	}
+	/* object */
 }
