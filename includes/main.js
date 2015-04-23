@@ -20,5 +20,5 @@ $(document).ready(function(){
 		$('#ytio-stats').removeClass("ytio-hid");
 		$('#ytio-last-uploads,#ytio-popular-uploads').addClass("ytio-hid");
 	})
-
+	
 })
