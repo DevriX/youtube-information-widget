@@ -1,5 +1,7 @@
 /* Copyright YouTube information Widget Plugin, by Samuel Elh ( sam at elegance-style.com ) */
-
+div.ytio * {
+	transition: All .3s;
+}
 div.ytio u {
 	text-decoration: underline;
 }
@@ -49,4 +51,23 @@ tr.ytio-help td:before {
 	tr.ytio-help td:before {
 		display: none;
 	}
+}
+
+#ytio-clear-cache a {
+	background: #2EA2CC;
+	padding: .6em 1em;
+	color: #fff;
+	text-decoration: none;
+	box-shadow: 1px 1px 3px #574F4F;
+	margin-right: .5em;
+}
+
+#ytio-clear-cache img {
+	display: none;
+    margin-bottom: -6px;
+}
+
+#ytio-clear-cache span {
+	background: #E7E7E7;
+	padding: 0.6em 0.5em;
 }
