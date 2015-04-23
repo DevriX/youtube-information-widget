@@ -1,4 +1,5 @@
 /* Copyright YouTube information Widget Plugin, by Samuel Elh ( sam at elegance-style.com ) */
+
 div.ytio * {
 	transition: All .3s;
 }
@@ -9,7 +10,6 @@ div.ytio b,
 div.ytio strong {
 	font-weight: bold;
 }
-
 span.ytio-help {
 	background: #E7E7E7;	
 	padding: 0.4em 0.7em;
@@ -19,16 +19,17 @@ span.ytio-help {
 	white-space: pre;
 	transition: All .1s;
 }
-
 span.ytio-help-active {
 	background: #999999;	
 	color: #fff;
 }
-
+a[href^="options-general.php?page=ytio_clear_cache"],
+a[href="options-general.php?page=ytio_clear_cache"] {
+    display: none!important;
+}
 tr.ytio-hid {
 	display: none;
 }
-
 tr.ytio-help td {
 	line-height: 1.3;
 	font-size: 13px;
@@ -37,7 +38,6 @@ tr.ytio-help td {
 	padding: 1em;
 	border-radius: 3px;
 }
-
 tr.ytio-help td:before {
 	content: "";
 	display: block;
@@ -46,13 +46,15 @@ tr.ytio-help td:before {
 	float: left;
 	margin-top: -30px;
 }
-
 @media screen and (max-width: 782px) {
 	tr.ytio-help td:before {
 		display: none;
 	}
+	div.ytio fieldset {
+		width: inherit!important;
+		float: none!important;
+	}
 }
-
 #ytio-clear-cache a {
 	background: #2EA2CC;
 	padding: .6em 1em;
@@ -61,13 +63,9 @@ tr.ytio-help td:before {
 	box-shadow: 1px 1px 3px #574F4F;
 	margin-right: .5em;
 }
-
-#ytio-clear-cache img {
-	display: none;
-    margin-bottom: -6px;
-}
-
-#ytio-clear-cache span {
-	background: #E7E7E7;
-	padding: 0.6em 0.5em;
+#ytio-submit img {
+    margin: -5px 0;
+    display: none;
+    -webkit-opacity: .5;
+    opacity: .5;
 }
