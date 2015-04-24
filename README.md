@@ -1,4 +1,4 @@
-#YouTube information widget
+#<a href="https://wordpress.org/plugins/youtube-information-widget/">YouTube information widget</a>
 
 Contributors: <a href="http://profiles.wordpress.org/elhardoum/">Samuel Elh</a><br />
 Tags: iframe, mobile, responsive,  shortcode, subscribe, sidebar,  video, 
