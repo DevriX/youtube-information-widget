@@ -4,7 +4,8 @@ Contributors: <a href="http://profiles.wordpress.org/elhardoum/">Samuel Elh</a><
 Tags: iframe, mobile, responsive,  shortcode, subscribe, sidebar,  video, 
 views, video player, wordpress, widget,  youtube, Youtube channel, youtube user, Youtube-video, youtube plugin<br />
 Requires at least: 3.0.1<br />
-Tested up to: 4.1.1<br />
+Tested up to: 4.2.4<br />
+Version: 2.0<br />
 Stable tag: trunk<br />
 License: GPLv2 or later<br />
 License URI: http://www.gnu.org/licenses/gpl-2.0.html<br />
@@ -18,5 +19,5 @@ This plugin allows you to embed information about your YouTube channel, includin
 3. Update settings and, Enjoy!
 
 #Notice
-I am still updating this plugin ( my first one ), and will try to upload it to Wordpress plugins repository soon. 
-Thanks for your understanding.
+Download this plugin from WordPress plugins repository
+https://wordpress.org/plugins/youtube-information-widget/
